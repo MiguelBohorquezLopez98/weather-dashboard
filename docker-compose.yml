@@ -1,6 +1,6 @@
 services:
   web:
     build:
-      context: ./web
+      context: .
     ports:
       - "8080:80"
