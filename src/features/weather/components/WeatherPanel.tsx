@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 import { useGeocodeSelectedCity } from '../hooks/useGeocodeSelectedCity';
 import { useCurrentWeather } from '../hooks/useCurrentWeather';
-import thermoIcon from '../../../assets//termometro.png';
+import bannerWeather from '../../../assets/banner-weather.jpg';
+import { Card } from '@/components/ui/card';
 
 type Props = {
     cityName: string;
@@ -9,10 +10,9 @@ type Props = {
 };
 
 export function WeatherPanel({ cityName, countryIso }: Props) {
-    // 1) Geocoding: obtener coordenadas de la ciudad seleccionada
+    // Obtener coordenadas de la ciudad seleccionada
     const geo = useGeocodeSelectedCity(cityName || undefined, countryIso || undefined);
 
-    // 2) Elegimos “best match” (regla simple)
     const coords = useMemo(() => {
         const results = geo.data?.results ?? [];
         if (!results.length) return null;
@@ -30,7 +30,7 @@ export function WeatherPanel({ cityName, countryIso }: Props) {
         };
     }, [geo.data, cityName]);
 
-    // 3) Forecast: traer clima solo si hay coords
+    // Forecast: traer clima solo si hay coords
     const weather = useCurrentWeather(coords?.lat, coords?.lon);
 
     if (!cityName) {
@@ -46,16 +46,13 @@ export function WeatherPanel({ cityName, countryIso }: Props) {
 
             {/* Panel de clima */}
             {coords && (
-                <div className="relative bg-amber-50 rounded-2xl p-8 text-lg overflow-hidden">
+                <Card className="relative mx-auto w-full pt-0 bg-amber-50 rounded-2xl p-8 text-lg">
+                    <div className="absolute inset-0 z-30" />
                     <img
-                        src={thermoIcon}
-                        alt="Thermometer"
-                        className="absolute top-4 right-4 w-20 h-20 opacity-80 pointer-events-none select-none"
+                        src={bannerWeather}
+                        alt="Weather"
+                        className="relative z-20 w-full object-cover rounded"
                     />
-
-                    {/* <div>
-                        Coordinates for <b>{coords.label}</b>: {coords.lat}, {coords.lon}
-                    </div> */}
 
                     {weather.isFetching && <div className="mt-4">Loading weather...</div>}
                     {weather.isError && <div className="mt-4">Failed to load weather.</div>}
@@ -71,7 +68,7 @@ export function WeatherPanel({ cityName, countryIso }: Props) {
                             </div>
                         </div>
                     )}
-                </div>
+                </Card>
             )}
         </div>
     );

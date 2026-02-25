@@ -1,4 +1,11 @@
 import { useMemo } from 'react';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { getCities, getCountries, getStates } from '../lib/locations';
 import type { LocationSelection } from '../types/location';
 
@@ -21,7 +28,7 @@ export function LocationSelectors({ value, onChange }: Props) {
     }, [value.countryIso, value.stateIso]);
 
     function changeCountry(countryIso: string) {
-        // Cuando cambia el país, reseteamos state y city (porque ya no son válidos)
+        // Cuando cambia el país, reseteamos state y city
         onChange({ countryIso, stateIso: '', cityName: '' });
     }
 
@@ -34,24 +41,27 @@ export function LocationSelectors({ value, onChange }: Props) {
         onChange({ ...value, cityName });
     }
 
+    const selectedState = value.stateIso.length > 0 ? value.stateIso : undefined;
+    const selectedCity = value.cityName.length > 0 ? value.cityName : undefined;
+
     return (
         <div className="grid gap-12 mt-16 border-2 border-amber-500 rounded-2xl p-8 bg-amber-500">
             {/* Country */}
             <div>
                 <label className='text-xl text-white font-bold'>
                     Country
-                    <select
-                        className='text-lg text-black font-normal bg-amber-50 rounded border border-gray-300 focus:outline-none focus:ring-0 focus:ring-offset-0'
-                        value={value.countryIso}
-                        onChange={(e) => changeCountry(e.target.value)}
-                        style={{ display: 'block', width: '100%', marginTop: 6 }}
-                    >
-                        {countries.map((c) => (
-                            <option key={c.isoCode} value={c.isoCode}>
-                                {c.name}
-                            </option>
-                        ))}
-                    </select>
+                    <Select value={value.countryIso} onValueChange={changeCountry}>
+                        <SelectTrigger className='mt-1.5 w-full text-lg text-black font-normal bg-amber-50 border-gray-300'>
+                            <SelectValue placeholder="Select a country..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {countries.map((c) => (
+                                <SelectItem key={c.isoCode} value={c.isoCode}>
+                                    {c.name}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
                 </label>
             </div>
 
@@ -59,22 +69,23 @@ export function LocationSelectors({ value, onChange }: Props) {
             <div>
                 <label className='text-xl text-white font-bold'>
                     State / Province
-                    <select
-                        className='text-lg text-black font-normal bg-amber-50 rounded border border-gray-300 focus:outline-none focus:ring-0 focus:ring-offset-0'
-                        value={value.stateIso}
-                        onChange={(e) => changeState(e.target.value)}
+                    <Select
+                        key={value.countryIso}
+                        value={selectedState}
+                        onValueChange={changeState}
                         disabled={states.length === 0}
-                        style={{ display: 'block', width: '100%', marginTop: 6 }}
                     >
-                        <option value="" disabled>
-                            Select a state...
-                        </option>
-                        {states.map((s) => (
-                            <option key={s.isoCode} value={s.isoCode}>
-                                {s.name}
-                            </option>
-                        ))}
-                    </select>
+                        <SelectTrigger className='mt-1.5 w-full text-lg text-black font-normal bg-amber-50 border-gray-300'>
+                            <SelectValue placeholder="Select a state..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {states.map((s) => (
+                                <SelectItem key={s.isoCode} value={s.isoCode}>
+                                    {s.name}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
                 </label>
             </div>
 
@@ -82,22 +93,23 @@ export function LocationSelectors({ value, onChange }: Props) {
             <div>
                 <label className='text-xl text-white font-bold'>
                     City
-                    <select
-                        className='text-lg text-black font-normal bg-amber-50 rounded border border-gray-300 focus:outline-none focus:ring-0 focus:ring-offset-0'
-                        value={value.cityName}
-                        onChange={(e) => changeCity(e.target.value)}
+                    <Select
+                        key={`${value.countryIso}-${value.stateIso}`}
+                        value={selectedCity}
+                        onValueChange={changeCity}
                         disabled={!value.stateIso || cities.length === 0}
-                        style={{ display: 'block', width: '100%', marginTop: 6 }}
                     >
-                        <option value="" disabled>
-                            Select a city...
-                        </option>
-                        {cities.map((c) => (
-                            <option key={c.name} value={c.name}>
-                                {c.name}
-                            </option>
-                        ))}
-                    </select>
+                        <SelectTrigger className='mt-1.5 w-full text-lg text-black font-normal bg-amber-50 border-gray-300'>
+                            <SelectValue placeholder="Select a city..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {cities.map((c) => (
+                                <SelectItem key={c.name} value={c.name}>
+                                    {c.name}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
                 </label>
             </div>
         </div>

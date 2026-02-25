@@ -7,6 +7,6 @@ export function useGeocodeSelectedCity(city?: string, countryCode?: string) {
         queryFn: ({ signal }) =>
             geocodeSelectedCity({ city: city!, countryCode: countryCode!, signal }),
         enabled: !!city && !!countryCode,
-        staleTime: 1000 * 60 * 60, // 1 hora (geocoding no cambia)
+        staleTime: 1000 * 60 * 60,
     });
 }

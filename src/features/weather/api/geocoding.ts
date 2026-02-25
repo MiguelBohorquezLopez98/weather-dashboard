@@ -5,7 +5,7 @@ const GEO_URL = import.meta.env.VITE_OPEN_METEO_GEO_URL;
 
 export async function geocodeSelectedCity(params: {
     city: string;
-    countryCode: string; // ISO2, ej: "EC"
+    countryCode: string;
     signal?: AbortSignal;
 }) {
     const { city, countryCode, signal } = params;
