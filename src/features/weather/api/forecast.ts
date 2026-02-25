@@ -21,3 +21,25 @@ export async function getCurrentWeather(params: {
 
     return ForecastResponseSchema.parse(data);
 }
+
+export async function getDailyForecast7(params: {
+    latitude: number;
+    longitude: number;
+    signal?: AbortSignal;
+}) {
+    const { latitude, longitude, signal } = params;
+
+    const qs = new URLSearchParams({
+        latitude: String(latitude),
+        longitude: String(longitude),
+
+        daily: 'temperature_2m_max,temperature_2m_min',
+        forecast_days: '7',
+        timezone: 'auto',
+    });
+
+    const url = `${FORECAST_URL}/forecast?${qs.toString()}`;
+    const data = await httpGet<unknown>(url, signal);
+
+    return ForecastResponseSchema.parse(data);
+}
